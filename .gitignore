@@ -34,3 +34,8 @@ build/
 
 /logs/
 /.shardingsphere/
+##
+novel-mysql
+redis/data
+db/3novel_data.sql
+.mvn

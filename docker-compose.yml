@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+  novel-mysql:
+    build:
+      context: ./db
+    environment:
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: 123456
+    restart: always
+    container_name: novel-mysql
+    image: novel-mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./novel-mysql:/var/lib/mysql
+    command: --lower_case_table_names=1
+    networks:
+      - novel
+
+  novel-redis:
+    container_name: novel-redis
+    image: redis:6.2.6
+    restart: always
+    command: redis-server /etc/redis/redis.conf
+    volumes:
+      - ./redis/conf:/etc/redis  #指定外部配置
+      - ./redis/data:/data #指定数据目录，此配置一定要有
+    ports:
+      - "6379:6379"
+    networks:
+      - novel
+
+#  novel-rabbitmq:
+#    restart: always
+#    container_name: novel-rabbitmq
+#    image: rabbitmq:3-management
+#    volumes:
+#      - ./rabbitmq/conf:/etc/rabbitmq
+#      - ./rabbitmq/data:/var/lib/rabbitmq
+#    #      - ./rabbitmq/log:/var/log/rabbitmq
+#    ports:
+#      - "15672:15672" #web页面
+#      - "5672:5672"
+#    environment:
+#      RABBITMQ_DEFAULT_USER: chensino
+#      RABBITMQ_DEFAULT_PASS: 123456
+#    networks:
+#      - novel
+
+#  novel-minio:
+#    restart: always
+#    container_name: novel-minio
+#    image: minio/minio
+#    ports:
+#      - "9000:9000"
+#      - "9001:9001" #web页面
+#    volumes:
+#      - ./minio/data:/data
+#      - ./minio/config:/root/.minio/
+#    environment:
+#      - "MINIO_ACCESS_KEY=admin"
+#      - "MINIO_SECRET_KEY=12345678"
+#    command: server --console-address ':9001' /data
+#    privileged: true
+#    networks:
+#      - novel
+
+networks:
+  novel:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.55.0.0/16
+          gateway: 172.55.0.1
