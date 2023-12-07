@@ -66,10 +66,25 @@ services:
 #    networks:
 #      - novel
 
+
+  novel-biz:
+    build:
+      context: ./
+    depends_on:
+      - novel-mysql
+      - novel-redis
+    restart: no
+    container_name: novel-biz
+    image: novel-biz
+    ports:
+      - "8888:8888"
+    networks:
+      - novel
+
 networks:
   novel:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.55.0.0/16
-          gateway: 172.55.0.1
+        - subnet: 172.56.0.0/16
+          gateway: 172.56.0.1
